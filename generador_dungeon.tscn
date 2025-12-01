@@ -1,4 +1,4 @@
-[gd_scene load_steps=76 format=3 uid="uid://cmavqeategf0r"]
+[gd_scene load_steps=78 format=3 uid="uid://cmavqeategf0r"]
 
 [ext_resource type="Script" uid="uid://dvhdklhchodhp" path="res://generador_dungeon.gd" id="1_4pr7c"]
 [ext_resource type="Texture2D" uid="uid://d3tu33kosnt2h" path="res://crawl-tiles Oct-5-2010/dc-dngn/floor/pebble_brown0.png" id="2_p1q8q"]
@@ -6,6 +6,8 @@
 [ext_resource type="Script" uid="uid://cv70k7877sro1" path="res://player.gd" id="3_4jx0k"]
 [ext_resource type="Texture2D" uid="uid://6ebqf8asfqt" path="res://crawl-tiles Oct-5-2010/dc-dngn/wall/stone_dark3.png" id="3_pdp17"]
 [ext_resource type="Texture2D" uid="uid://by062nh5pfdil" path="res://male_sprites.png" id="7_0ft82"]
+[ext_resource type="AudioStream" uid="uid://c0knjq254ngft" path="res://Footsteps Sound Effect.mp3" id="7_hthtw"]
+[ext_resource type="AudioStream" uid="uid://dcxdy4olf6xcq" path="res://Game_music.mp3" id="7_rjosd"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_0ft82"]
 texture = ExtResource("2_p1q8q")
@@ -368,7 +370,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"idle_right",
-"speed": 5.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -536,6 +538,7 @@ tile_set = SubResource("TileSet_p1q8q")
 
 [node name="Player" type="CharacterBody2D" parent="."]
 script = ExtResource("3_4jx0k")
+speed = 100
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
 visible = false
@@ -551,5 +554,24 @@ scale = Vector2(0.7, 0.7)
 sprite_frames = SubResource("SpriteFrames_pdp17")
 animation = &"idle_right"
 
+[node name="Footstep" type="AudioStreamPlayer2D" parent="Player"]
+volume_db = -5.0
+pitch_scale = 0.1
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="Player/Footstep"]
+stream = ExtResource("7_hthtw")
+volume_db = -10.0
+pitch_scale = 0.3
+
+[node name="FootstepTimer" type="Timer" parent="Player"]
+wait_time = 0.25
+
 [node name="Chest" parent="." instance=ExtResource("2_pdp17")]
 position = Vector2(121, -152)
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_rjosd")
+volume_db = -15.0
+autoplay = true
+
+[connection signal="timeout" from="Player/FootstepTimer" to="Player" method="_on_footstep_timer_timeout"]
